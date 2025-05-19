@@ -1,0 +1,10 @@
+on: [push]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    name: To test action
+    steps:
+      - name: Hello world action step
+        id: hello
+        uses: 'jjmrocha/jacoco-summary@main'
