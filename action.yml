@@ -1,0 +1,16 @@
+name: 'jacoco-summary'
+author: 'Joaquim Rocha'
+description: 'GitHub Action to summarize JaCoCo code coverage in builds'
+branding: 
+  icon: 'shield'
+  color: 'green'
+inputs:
+  jacoco-csv-file:
+    description: 'Location of the JaCoCo CSV file'
+    required: false
+    default: 'build/reports/jacoco/test/jacocoTestReport.csv'
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - ${{ inputs.jacoco-csv-file }}
