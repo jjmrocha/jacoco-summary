@@ -1,2 +1,2 @@
 # jacoco-summary
-GitHub Action to summarize JaCoCo code coverage in builds
+GitHub Action add coverage from JaCoCo report to workflow job summary

@@ -1,6 +1,6 @@
 name: 'jacoco-summary'
 author: 'Joaquim Rocha'
-description: 'GitHub Action to summarize JaCoCo code coverage in builds'
+description: 'Add coverage from JaCoCo report to workflow job summary'
 branding: 
   icon: 'shield'
   color: 'green'
