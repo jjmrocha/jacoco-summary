@@ -8,6 +8,7 @@ WORKDIR $BUILD_HOME
 COPY go.mod ./
 COPY cmd cmd
 COPY jacoco jacoco
+COPY action action
 
 RUN go build -o jacoco cmd/main.go
 
