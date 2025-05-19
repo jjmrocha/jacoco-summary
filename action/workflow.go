@@ -5,6 +5,16 @@ import (
 	"os"
 )
 
+func GetFileName(filename string) string {
+	workspace := os.Getenv("GITHUB_WORKSPACE")
+
+	if workspace == "" {
+		return filename
+	}
+
+	return fmt.Sprintf("%s/%s", workspace, filename)
+}
+
 func WriteJobSummary(summary string) error {
 	env := os.Getenv("GITHUB_STEP_SUMMARY")
 
