@@ -16,6 +16,8 @@ func main() {
 		return
 	}
 
+	fmt.Println("Reading report file:", os.Getenv("GITHUB_WORKSPACE")+"/"+args[0])
+
 	report, err := jacoco.ReadReport(args[0])
 	if err != nil {
 		fmt.Println("Failed to read report.")
