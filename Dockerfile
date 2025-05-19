@@ -10,11 +10,11 @@ COPY cmd cmd
 COPY jacoco jacoco
 COPY action action
 
-RUN go build -o jacoco cmd/main.go
+RUN go build -o jsreport cmd/main.go
 
 # Final image
 FROM debian:12.10-slim
 
-COPY --from=build /build/jacoco /
+COPY --from=build /build/jsreport /
 
-ENTRYPOINT ["/jacoco"]
+ENTRYPOINT ["/jsreport"]
