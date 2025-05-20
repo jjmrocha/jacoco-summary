@@ -16,9 +16,9 @@ func main() {
 		return
 	}
 
-	jacocoFile := action.GetFileName(args[0])
+	fileName := action.GetFileName(args[0])
 
-	report, err := jacoco.ReadReport(jacocoFile)
+	report, err := jacoco.ReadReport(fileName)
 	if err != nil {
 		fmt.Println("Failed to read report.")
 		os.Exit(1)

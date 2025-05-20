@@ -3,6 +3,7 @@ package action
 import (
 	"fmt"
 	"os"
+	"path"
 )
 
 func GetFileName(filename string) string {
@@ -12,7 +13,7 @@ func GetFileName(filename string) string {
 		return filename
 	}
 
-	return fmt.Sprintf("%s/%s", workspace, filename)
+	return path.Join(workspace, filename)
 }
 
 func WriteJobSummary(summary string) error {
