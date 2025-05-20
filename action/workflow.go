@@ -26,12 +26,12 @@ func WriteJobSummary(summary string) error {
 
 	file, err := os.OpenFile(env, os.O_APPEND|os.O_WRONLY, 0644)
 	if err != nil {
-		return fmt.Errorf("failed to open GITHUB_STEP_SUMMARY file: %w", err)
+		return fmt.Errorf("failed to open GITHUB_STEP_SUMMARY file: %v", err)
 	}
 	defer file.Close()
 
 	if _, err := file.WriteString(summary); err != nil {
-		return fmt.Errorf("failed to write to GITHUB_STEP_SUMMARY file: %w", err)
+		return fmt.Errorf("failed to write to GITHUB_STEP_SUMMARY file: %v", err)
 	}
 
 	return nil

@@ -27,15 +27,25 @@ type ClassCoverage struct {
 }
 
 func ReadReport(fileName string) (*Report, error) {
+	coverageRows, err := readReportFile(fileName)
+	if err != nil {
+		return nil, err
+	}
+
+	report := buildReport(coverageRows)
+	return report, nil
+}
+
+func readReportFile(fileName string) ([]ClassCoverage, error) {
 	csvFile, err := os.Open(fileName)
 	if err != nil {
-		return nil, fmt.Errorf("Error reading report file %s: %v", fileName, err)
+		return nil, fmt.Errorf("error reading report file %s: %v", fileName, err)
 	}
 	defer csvFile.Close()
 
 	reader := csv.NewReader(csvFile)
 
-	coverageRows := make([]ClassCoverage, 0)
+	classRows := make([]ClassCoverage, 0)
 	line := 0
 
 	for {
@@ -44,7 +54,7 @@ func ReadReport(fileName string) (*Report, error) {
 			break
 		}
 		if err != nil {
-			return nil, fmt.Errorf("Error reading report file %s: %v", fileName, err)
+			return nil, fmt.Errorf("error reading report file %s: %v", fileName, err)
 		}
 
 		if line == 0 {
@@ -52,43 +62,21 @@ func ReadReport(fileName string) (*Report, error) {
 				return nil, fmt.Errorf("not enough fields in file %s: %v", fileName, err)
 			}
 		} else {
-			classCoverage, err := parseClassCoverage(row)
+			classCoverage, err := parseRow(row)
 			if err != nil {
-				return nil, fmt.Errorf("Error parsing line %d in report file %s: %v", line, fileName, err)
+				return nil, fmt.Errorf("error parsing line %d in report file %s: %v", line, fileName, err)
 			}
 
-			coverageRows = append(coverageRows, classCoverage)
+			classRows = append(classRows, classCoverage)
 		}
 
 		line++
 	}
 
-	report := buildReport(coverageRows)
-	return report, nil
+	return classRows, nil
 }
 
-func buildReport(coverageRows []ClassCoverage) *Report {
-	totalMissed := 0
-	totalCovered := 0
-	totalMissedBranches := 0
-	totalCoveredBranches := 0
-
-	for _, coverage := range coverageRows {
-		totalMissed += coverage.Missed
-		totalCovered += coverage.Covered
-		totalMissedBranches += coverage.MissedBranches
-		totalCoveredBranches += coverage.CoveredBranches
-	}
-
-	report := Report{
-		Details:        coverageRows,
-		Coverage:       percentage(totalMissed, totalCovered),
-		BranchCoverage: percentage(totalMissedBranches, totalCoveredBranches),
-	}
-	return &report
-}
-
-func parseClassCoverage(row []string) (ClassCoverage, error) {
+func parseRow(row []string) (ClassCoverage, error) {
 	missed, err := strconv.Atoi(row[3])
 	if err != nil {
 		return ClassCoverage{}, fmt.Errorf("error converting INSTRUCTION_MISSED to int: %v", err)
@@ -128,4 +116,26 @@ func percentage(missed, covered int) int {
 	}
 
 	return int(float32(covered) / float32(missed+covered) * 100)
+}
+
+func buildReport(coverageRows []ClassCoverage) *Report {
+	totalMissed := 0
+	totalCovered := 0
+	totalMissedBranches := 0
+	totalCoveredBranches := 0
+
+	for _, coverage := range coverageRows {
+		totalMissed += coverage.Missed
+		totalCovered += coverage.Covered
+		totalMissedBranches += coverage.MissedBranches
+		totalCoveredBranches += coverage.CoveredBranches
+	}
+
+	report := Report{
+		Details:        coverageRows,
+		Coverage:       percentage(totalMissed, totalCovered),
+		BranchCoverage: percentage(totalMissedBranches, totalCoveredBranches),
+	}
+
+	return &report
 }

@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"log"
 	"os"
 
 	"github.com/jjmrocha/jacoco-summary/action"
@@ -12,24 +12,20 @@ func main() {
 	args := os.Args[1:]
 
 	if len(args) == 0 {
-		fmt.Println("No arguments provided.")
-		return
+		log.Fatalln("No arguments provided.")
 	}
 
 	fileName := action.GetFileName(args[0])
 
 	report, err := jacoco.ReadReport(fileName)
 	if err != nil {
-		fmt.Println("Failed to read report.")
-		os.Exit(1)
+		log.Fatalf("%v\n", err)
 	}
 
 	summary := action.MarkdownReport(report)
-	err = action.WriteJobSummary(summary)
 
+	err = action.WriteJobSummary(summary)
 	if err != nil {
-		fmt.Println("Failed to write summary.")
-		fmt.Println(err)
-		os.Exit(1)
+		log.Fatalf("%v\n", err)
 	}
 }
