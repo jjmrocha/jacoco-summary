@@ -8,6 +8,9 @@ jobs:
 
     name: To test action
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
       - name: Test JaCoCo summary
         id: hello
         uses: 'jjmrocha/jacoco-summary@main'
