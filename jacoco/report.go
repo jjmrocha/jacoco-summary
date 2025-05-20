@@ -4,7 +4,6 @@ import (
 	"encoding/csv"
 	"fmt"
 	"io"
-	"log"
 	"os"
 	"strconv"
 )
@@ -30,7 +29,7 @@ type ClassCoverage struct {
 func ReadReport(fileName string) (*Report, error) {
 	csvFile, err := os.Open(fileName)
 	if err != nil {
-		log.Fatalf("Error reading report file %s: %v\n", fileName, err)
+		return nil, fmt.Errorf("Error reading report file %s: %v", fileName, err)
 	}
 	defer csvFile.Close()
 
@@ -45,17 +44,17 @@ func ReadReport(fileName string) (*Report, error) {
 			break
 		}
 		if err != nil {
-			return nil, fmt.Errorf("Error reading report file %s: %v\n", fileName, err)
+			return nil, fmt.Errorf("Error reading report file %s: %v", fileName, err)
 		}
 
 		if line == 0 {
 			if len(row) < 13 {
-				return nil, fmt.Errorf("not enough fields in file %s: %v\n", fileName, err)
+				return nil, fmt.Errorf("not enough fields in file %s: %v", fileName, err)
 			}
 		} else {
 			classCoverage, err := parseClassCoverage(row)
 			if err != nil {
-				log.Fatalf("Error parsing line in report file %s: %v\n", fileName, err)
+				return nil, fmt.Errorf("Error parsing line %d in report file %s: %v", line, fileName, err)
 			}
 
 			coverageRows = append(coverageRows, classCoverage)
