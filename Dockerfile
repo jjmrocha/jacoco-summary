@@ -13,7 +13,7 @@ COPY action action
 RUN go build -o jsreport cmd/main.go
 
 # Final image
-FROM debian:12.10-slim
+FROM gcr.io/distroless/static-debian12:latest
 
 COPY --from=build /build/jsreport /
 
