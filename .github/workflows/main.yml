@@ -3,6 +3,9 @@ on: [push]
 jobs:
   test:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
     name: To test action
     steps:
       - name: Test JaCoCo summary
