@@ -2,34 +2,34 @@ package action
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/jjmrocha/jacoco-summary/jacoco"
 )
 
 func MarkdownReport(report *jacoco.Report) string {
-	var markdown string
+	var b strings.Builder
 
-	markdown += "# JaCoCo Report\n"
-	markdown += fmt.Sprintf("- Coverage: %s\n", percentageToString(report.Coverage))
-	markdown += fmt.Sprintf("- Branches: %s\n", percentageToString(report.BranchCoverage))
-	markdown += "\n"
-	markdown += "## Class Coverage\n"
+	b.WriteString("# JaCoCo Report\n")
+	b.WriteString(fmt.Sprintf("- Coverage: %s\n", percentageToString(report.Coverage)))
+	b.WriteString(fmt.Sprintf("- Branches: %s\n", percentageToString(report.BranchCoverage)))
+	b.WriteString("\n")
 
-	markdown += "Class | Coverage | Branches\n"
-	markdown += "------|----------|---------\n"
+	b.WriteString("## Class Coverage\n")
+	b.WriteString("Class | Coverage | Branches\n")
+	b.WriteString("------|----------|---------\n")
 
 	for _, class := range report.Details {
 		coverage := percentageToString(class.Coverage)
 		branchCoverage := percentageToString(class.BranchCoverage)
-
-		markdown += fmt.Sprintf("%s | %s | %s\n", class.ClassName, coverage, branchCoverage)
+		b.WriteString(fmt.Sprintf("%s | %s | %s\n", class.ClassName, coverage, branchCoverage))
 	}
 
-	return markdown
+	return b.String()
 }
 
 func percentageToString(value int) string {
-	if value == -1 {
+	if value == jacoco.Coverage_NA {
 		return "N/A"
 	}
 

@@ -9,6 +9,8 @@ import (
 	"strconv"
 )
 
+const Coverage_NA = -1
+
 type Report struct {
 	Details        []ClassCoverage
 	Coverage       int
@@ -62,38 +64,29 @@ func ReadReport(fileName string) (*Report, error) {
 		line++
 	}
 
-	report := Report{
-		Details:        coverageRows,
-		Coverage:       computeCoverage(coverageRows),
-		BranchCoverage: computeBranchCoverage(coverageRows),
-	}
-
-	return &report, nil
+	report := buildReport(coverageRows)
+	return report, nil
 }
 
-func computeBranchCoverage(coverageRows []ClassCoverage) int {
+func buildReport(coverageRows []ClassCoverage) *Report {
+	totalMissed := 0
+	totalCovered := 0
 	totalMissedBranches := 0
 	totalCoveredBranches := 0
 
 	for _, coverage := range coverageRows {
+		totalMissed += coverage.Missed
+		totalCovered += coverage.Covered
 		totalMissedBranches += coverage.MissedBranches
 		totalCoveredBranches += coverage.CoveredBranches
 	}
 
-	return percentage(totalMissedBranches, totalCoveredBranches)
-
-}
-
-func computeCoverage(coverageRows []ClassCoverage) int {
-	totalMissed := 0
-	totalCovered := 0
-
-	for _, coverage := range coverageRows {
-		totalMissed += coverage.Missed
-		totalCovered += coverage.Covered
+	report := Report{
+		Details:        coverageRows,
+		Coverage:       percentage(totalMissed, totalCovered),
+		BranchCoverage: percentage(totalMissedBranches, totalCoveredBranches),
 	}
-
-	return percentage(totalMissed, totalCovered)
+	return &report
 }
 
 func parseClassCoverage(row []string) (ClassCoverage, error) {
@@ -132,7 +125,7 @@ func parseClassCoverage(row []string) (ClassCoverage, error) {
 
 func percentage(missed, covered int) int {
 	if missed+covered == 0 {
-		return -1
+		return Coverage_NA
 	}
 
 	return int(float32(covered) / float32(missed+covered) * 100)
